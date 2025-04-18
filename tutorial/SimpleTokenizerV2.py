@@ -1,30 +1,41 @@
 #!/usr/bin/env python
-import re
+import re, time
 from termcolor import colored
 
 
 class SimpleTokenizerV2:
-    def __init__(self, data):
-        print("...split text into a list:")
-        data = re.split(self.regex(), data)
-        print(colored(data[0:100], "green"))
+    def __init__(self, corpus_path="corpus_text/the-verdict.txt"):
+        self.sleep()
+        print("...read the corpus text path {}".format(corpus_path))
+        with open(corpus_path, "r", encoding="utf-8") as file:
+            self.corpus_text = file.read()
 
+        self.sleep()
+        print("...split text into a list:")
+
+        self.data = re.split(self.regex(), self.corpus_text)
+        print(colored(self.data[0:100], "green"))
+
+        self.sleep()
         print("...get all unique tokens into a list, building a vocabulary :")
-        all_tokens = sorted(list(set(data)))
+        all_tokens = sorted(list(set(self.data)))
         print(colored(all_tokens[0:100], "green"))
 
+        self.sleep()
         print("...append endoftext and unk")
         all_tokens.extend(["<|endoftext|>", "<|unk|>"])
 
+        self.sleep()
         print("...clean up spaces with striping")
         preprocessed = [item.strip() for item in all_tokens if item.strip()]
         print(colored(preprocessed[0:100], "green"))
 
+        self.sleep()
         print("...add numbers to each token/word")
         vocab = {token: integer for integer, token in enumerate(preprocessed)}
         for i in vocab:
             print(" {0} : {1}".format(vocab[i], i))
-            if vocab[i] > 30:
+            if vocab[i] > 15:
                 break
         # print(vocab)
 
@@ -48,22 +59,22 @@ class SimpleTokenizerV2:
         text = " ".join([self.int_to_str[i] for i in ids])
         return text
 
+    def sleep(self, seconds=1):
+        time.sleep(seconds)
+
 
 if __name__ == "__main__":
-    print("...read the book the-verdict.txt into data")
-    with open("the-verdict.txt", "r", encoding="utf-8") as file:
-        data = file.read()
-
     print("...init Tokenizer")
-    tokenizer = SimpleTokenizerV2(data)
+    t = SimpleTokenizerV2("corpus_text/the-verdict.txt")
 
+    t.sleep()
     text = "Hello, world. Is this-- a test?"
-
     print("...run a test with text: {}".format(text))
-    print(colored(tokenizer.encode(text), "green"))
-    print(colored(tokenizer.decode(tokenizer.encode(text)), "green"))
+    print(colored(t.encode(text), "green"))
+    print(colored(t.decode(t.encode(text)), "green"))
 
+    t.sleep()
     print("...run a test with text book")
-    text = data
-    print(colored(tokenizer.encode(text)[0:100], "green"))
-    print(colored(tokenizer.decode(tokenizer.encode(text)[0:100]), "green"))
+    text = t.corpus_text
+    print(colored(t.encode(text)[0:100], "green"))
+    print(colored(t.decode(t.encode(text)[0:100]), "green"))

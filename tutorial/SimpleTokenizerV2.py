@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import re, time
+import torch
 from termcolor import colored
 
 
@@ -64,6 +65,8 @@ class SimpleTokenizerV2:
 
 
 if __name__ == "__main__":
+    print("...Machine has GPU: ", torch.cuda.is_available())
+
     print("...init Tokenizer")
     t = SimpleTokenizerV2("corpus_text/the-verdict.txt")
 
